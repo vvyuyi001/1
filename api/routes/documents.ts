@@ -3,7 +3,9 @@ import multer from 'multer';
 import { documentService } from '../services/documentService.js';
 
 const router = Router();
-const upload = multer({ dest: '/tmp/' });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {

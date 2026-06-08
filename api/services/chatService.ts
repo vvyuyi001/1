@@ -14,10 +14,14 @@ export class ChatService {
   async chat(request: ChatRequest): Promise<ChatResponse> {
     const { question, history } = request;
     
-    const sources = await knowledgeStore.similaritySearch(
-      question,
-      currentSettings.topK
-    );
+    let sources: Source[] = [];
+    
+    if (currentSettings.openaiApiKey) {
+      sources = await knowledgeStore.similaritySearch(
+        question,
+        currentSettings.topK
+      );
+    }
 
     const context = sources
       .map((s, i) => `[Source ${i + 1} from ${s.documentName}]:\n${s.content}`)
@@ -26,7 +30,11 @@ export class ChatService {
     let answer = '';
     
     if (sources.length === 0) {
-      answer = '知识库中没有找到相关内容。请先上传文档到知识库。';
+      if (!currentSettings.openaiApiKey) {
+        answer = '请先在设置页面配置 LLM API Key，然后上传文档到知识库以开始智能问答。';
+      } else {
+        answer = '知识库中没有找到相关内容。请先上传文档到知识库。';
+      }
     } else if (!currentSettings.openaiApiKey) {
       answer = this.generateDemoAnswer(question, sources);
     } else {
