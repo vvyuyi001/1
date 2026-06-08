@@ -4,8 +4,8 @@ import { OpenAI } from '@langchain/openai';
 
 let currentSettings: Settings = {
   openaiApiKey: process.env.OPENAI_API_KEY || '',
-  openaiBaseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
-  model: 'gpt-3.5-turbo',
+  openaiBaseUrl: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
+  model: 'deepseek-chat',
   temperature: 0.7,
   topK: 5,
 };
@@ -46,7 +46,7 @@ export class ChatService {
 
   private generateDemoAnswer(question: string, sources: Source[]): string {
     const docNames = [...new Set(sources.map(s => s.documentName))];
-    return `这是一个演示回答。\n\n我在以下文档中找到了与您问题相关的内容：\n${docNames.map(name => `- ${name}`).join('\n')}\n\n请配置 OpenAI API Key 以获取智能回答。`;
+    return `这是一个演示回答。\n\n我在以下文档中找到了与您问题相关的内容：\n${docNames.map(name => `- ${name}`).join('\n')}\n\n请配置 LLM API Key 以获取智能回答。`;
   }
 
   private async generateAnswer(

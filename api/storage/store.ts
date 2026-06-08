@@ -30,7 +30,7 @@ export class KnowledgeStore {
       this.embeddings = new OpenAIEmbeddings({
         openAIApiKey: process.env.OPENAI_API_KEY || 'demo-key',
         configuration: {
-          baseURL: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+          baseURL: process.env.OPENAI_BASE_URL || 'https://api.deepseek.com',
         },
       });
       this.vectorStore = new MemoryVectorStore(this.embeddings);
@@ -44,7 +44,7 @@ export class KnowledgeStore {
       this.embeddings = new OpenAIEmbeddings({
         openAIApiKey: apiKey || 'demo-key',
         configuration: {
-          baseURL: baseUrl || 'https://api.openai.com/v1',
+          baseURL: baseUrl || 'https://api.deepseek.com',
         },
       });
       this.vectorStore = new MemoryVectorStore(this.embeddings);

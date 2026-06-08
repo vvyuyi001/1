@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Save, Key, Globe, Thermometer, Search } from 'lucide-react';
+import { Save, Key, Globe, Thermometer, Search, Sparkles } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { getSettings, updateSettings } from '../lib/api';
-import { Settings as SettingsType } from '../../shared/types';
 
 export function SettingsPage() {
   const { settings, setSettings } = useStore();
   const [formData, setFormData] = useState({
     openaiApiKey: '',
-    openaiBaseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-3.5-turbo',
+    openaiBaseUrl: 'https://api.deepseek.com',
+    model: 'deepseek-chat',
     temperature: 0.7,
     topK: 5,
   });
@@ -28,6 +27,40 @@ export function SettingsPage() {
     } catch (error) {
       console.error('Failed to load settings:', error);
     }
+  };
+
+  const handleProviderChange = (provider: string) => {
+    if (provider === 'deepseek') {
+      setFormData((prev) => ({
+        ...prev,
+        openaiBaseUrl: 'https://api.deepseek.com',
+        model: 'deepseek-chat',
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        openaiBaseUrl: 'https://api.openai.com/v1',
+        model: 'gpt-3.5-turbo',
+      }));
+    }
+  };
+
+  const getModelOptions = () => {
+    if (formData.openaiBaseUrl.includes('deepseek')) {
+      return (
+        <>
+          <option value="deepseek-chat">deepseek-chat (通用对话)</option>
+          <option value="deepseek-coder">deepseek-coder (代码助手)</option>
+        </>
+      );
+    }
+    return (
+      <>
+        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+        <option value="gpt-4">gpt-4</option>
+        <option value="gpt-4-turbo-preview">gpt-4-turbo-preview</option>
+      </>
+    );
   };
 
   const handleSave = async () => {
@@ -56,7 +89,7 @@ export function SettingsPage() {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-2">系统设置</h2>
           <p className="text-slate-400">
-            配置 OpenAI API 和问答参数
+            配置 LLM API 和问答参数
           </p>
         </div>
 
@@ -64,15 +97,46 @@ export function SettingsPage() {
           <div className="bg-dark-light border border-slate-700 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
-                <Key className="w-5 h-5 text-secondary" />
+                <Sparkles className="w-5 h-5 text-secondary" />
               </div>
-              <h3 className="text-lg font-semibold text-white">API 配置</h3>
+              <h3 className="text-lg font-semibold text-white">LLM 提供商</h3>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <button
+                onClick={() => handleProviderChange('deepseek')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  formData.openaiBaseUrl.includes('deepseek')
+                    ? 'border-secondary bg-secondary/10'
+                    : 'border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                <div className="text-2xl mb-2">🚀</div>
+                <div className="font-semibold text-white">DeepSeek</div>
+                <div className="text-xs text-slate-400 mt-1">性价比高 · 强大推理</div>
+              </button>
+
+              <button
+                onClick={() => handleProviderChange('openai')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  formData.openaiBaseUrl.includes('openai')
+                    ? 'border-secondary bg-secondary/10'
+                    : 'border-slate-600 hover:border-slate-500'
+                }`}
+              >
+                <div className="text-2xl mb-2">✨</div>
+                <div className="font-semibold text-white">OpenAI</div>
+                <div className="text-xs text-slate-400 mt-1">GPT-4 · 行业标杆</div>
+              </button>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  OpenAI API Key
+                  <div className="flex items-center gap-2">
+                    <Key className="w-4 h-4" />
+                    API Key
+                  </div>
                 </label>
                 <input
                   type="password"
@@ -97,7 +161,7 @@ export function SettingsPage() {
                   type="text"
                   value={formData.openaiBaseUrl}
                   onChange={(e) => setFormData((prev) => ({ ...prev, openaiBaseUrl: e.target.value }))}
-                  placeholder="https://api.openai.com/v1"
+                  placeholder="https://api.deepseek.com"
                   className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                 />
               </div>
@@ -111,9 +175,7 @@ export function SettingsPage() {
                   onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
                   className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                 >
-                  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                  <option value="gpt-4">gpt-4</option>
-                  <option value="gpt-4-turbo-preview">gpt-4-turbo-preview</option>
+                  {getModelOptions()}
                 </select>
               </div>
             </div>
