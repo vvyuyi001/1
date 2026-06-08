@@ -49,17 +49,13 @@ export function KnowledgePage() {
     setIsDragging(false);
     
     const files = Array.from(e.dataTransfer.files);
-    for (const file of files) {
-      await handleFileUpload(file);
-    }
-  }, []);
+    await Promise.all(files.map(handleFileUpload));
+  }, [handleFileUpload]);
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    for (const file of files) {
-      await handleFileUpload(file);
-    }
-  }, []);
+    await Promise.all(files.map(handleFileUpload));
+  }, [handleFileUpload]);
 
   const handleDeleteDocument = async (id: string) => {
     if (!confirm('确定要删除这个文档吗？')) return;

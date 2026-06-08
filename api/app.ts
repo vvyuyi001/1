@@ -5,7 +5,6 @@
 import express, {
   type Request,
   type Response,
-  type NextFunction,
 } from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -34,7 +33,7 @@ app.use('/api/chat', chatRoutes)
  */
 app.use(
   '/api/health',
-  (_req: Request, res: Response, _next: NextFunction): void => {
+  (_req: Request, res: Response): void => {
     res.status(200).json({
       success: true,
       message: 'ok',
@@ -45,7 +44,7 @@ app.use(
 /**
  * error handler middleware
  */
-app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((error: Error, _req: Request, res: Response) => {
   res.status(500).json({
     success: false,
     error: 'Server internal error',
