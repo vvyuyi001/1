@@ -66,13 +66,17 @@ export function SettingsPage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      // 保存到后端
       await updateSettings(formData);
+      
+      // 保存到前端状态
       setSettings({
         openaiBaseUrl: formData.openaiBaseUrl,
         model: formData.model,
         temperature: formData.temperature,
         topK: formData.topK,
       });
+      
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
