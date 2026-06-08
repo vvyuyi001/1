@@ -22,10 +22,11 @@ export function ChatPage() {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    const question = input.trim();
     const userMessage: MessageType = {
       id: uuidv4(),
       role: 'user',
-      content: input,
+      content: question,
       timestamp: new Date(),
     };
 
@@ -35,7 +36,7 @@ export function ChatPage() {
 
     try {
       const response = await sendChat({
-        question: input,
+        question,
         history: messages,
       });
 
@@ -50,6 +51,7 @@ export function ChatPage() {
       addMessage(assistantMessage);
     } catch (error) {
       console.error('Chat error:', error);
+      alert(`发生错误：${error instanceof Error ? error.message : '未知错误'}`);
     } finally {
       setIsLoading(false);
     }
