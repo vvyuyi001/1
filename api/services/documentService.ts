@@ -3,7 +3,6 @@ import pdf from 'pdf-parse';
 import mammoth from 'mammoth';
 import { Document } from '../../shared/types';
 import { knowledgeStore } from '../storage/store';
-import { v4 as uuidv4 } from 'uuid';
 
 export class DocumentService {
   async processDocument(
@@ -43,7 +42,7 @@ export class DocumentService {
     const document: Document = {
       id,
       name: file.originalname,
-      type: ext as any,
+      type: ext as 'pdf' | 'txt' | 'md' | 'docx',
       size: file.size,
       uploadTime: new Date(),
       chunkCount,

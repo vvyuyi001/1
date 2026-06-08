@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Save, Key, Globe, Thermometer, Search, Sparkles } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { getSettings, updateSettings } from '../lib/api';
 
 export function SettingsPage() {
-  const { settings, setSettings } = useStore();
+  const { setSettings } = useStore();
   const [formData, setFormData] = useState({
     openaiApiKey: '',
     openaiBaseUrl: 'https://api.deepseek.com',
@@ -15,11 +15,7 @@ export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       const savedSettings = await getSettings();
       setSettings(savedSettings);
@@ -27,7 +23,11 @@ export function SettingsPage() {
     } catch (error) {
       console.error('Failed to load settings:', error);
     }
-  };
+  }, [setSettings]);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
   const handleProviderChange = (provider: string) => {
     if (provider === 'deepseek') {

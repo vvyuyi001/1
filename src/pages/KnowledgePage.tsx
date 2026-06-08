@@ -1,24 +1,36 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Upload, FileText, Trash2, Plus, Loader2 } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { uploadDocument, getDocuments, deleteDocument } from '../lib/api';
-import { useEffect } from 'react';
 
 export function KnowledgePage() {
   const { documents, setDocuments, addDocument, removeDocument } = useStore();
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    loadDocuments();
-  }, []);
-
-  const loadDocuments = async () => {
+  const loadDocuments = useCallback(async () => {
     try {
       const docs = await getDocuments();
       setDocuments(docs);
     } catch (error) {
       console.error('Failed to load documents:', error);
+    }
+  }, [setDocuments]);
+
+  useEffect(() => {
+    loadDocuments();
+  }, [loadDocuments]);
+
+  const handleFileUpload = async (file: File) => {
+    setIsLoading(true);
+    try {
+      const response = await uploadDocument(file);
+      addDocument(response.document);
+    } catch (error) {
+      console.error('Failed to upload document:', error);
+      alert('上传失败，请重试');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,19 +60,6 @@ export function KnowledgePage() {
       await handleFileUpload(file);
     }
   }, []);
-
-  const handleFileUpload = async (file: File) => {
-    setIsLoading(true);
-    try {
-      const response = await uploadDocument(file);
-      addDocument(response.document);
-    } catch (error) {
-      console.error('Failed to upload document:', error);
-      alert('上传失败，请重试');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleDeleteDocument = async (id: string) => {
     if (!confirm('确定要删除这个文档吗？')) return;

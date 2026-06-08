@@ -8,7 +8,7 @@ export function Sidebar() {
     { id: 'chat', label: '智能问答', icon: MessageSquare },
     { id: 'knowledge', label: '知识库', icon: BookOpen },
     { id: 'settings', label: '设置', icon: Settings },
-  ];
+  ] as const;
 
   return (
     <aside className="w-64 bg-dark-light border-r border-slate-700 flex flex-col">
@@ -29,7 +29,7 @@ export function Sidebar() {
           return (
             <button
               key={item.id}
-              onClick={() => setCurrentPage(item.id as any)}
+              onClick={() => setCurrentPage(item.id)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 isActive
                   ? 'bg-primary text-white shadow-lg'
